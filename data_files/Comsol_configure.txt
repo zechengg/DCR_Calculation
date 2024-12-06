@@ -1,0 +1,20 @@
+SRH with tunnelling:
+
+E	semi.normE	V/m	
+tau_max_n	1*10^(-5)[s]	s	
+tau_max_p	3*10^(-6)[s]	s	
+Nref_n	1e16[cm^(-3)]	1/m³	
+Nref_p	3e16[cm^(-3)]	1/m³	
+Ndop	semi.Nnetdop	1/m³	NA0+ND0
+tau_dop_n	tau_max_n/(1+(Ndop/Nref_n))	s	
+tau_dop_p	tau_max_n/(1+(Ndop/Nref_p))	s	
+Fgama	((24*0.26*me_const*(semi.Vth[eV])^3)^0.5)/(e_const*hbar_const)		
+gama	2*((3*pi)^0.5)*(semi.normE/Fgama)*exp((semi.normE/Fgama)^2)		
+tau_n	tau_dop_n/(1+gama)	s	
+tau_p	tau_dop_p/(1+gama)	s	
+			
+
+BTBT:
+
+4e15* semi.normE^2.5 * exp(-1.9e9/semi.normE)
+4e15* semi.normE^2.5 * exp(-1.9e9/semi.normE)
