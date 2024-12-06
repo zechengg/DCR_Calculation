@@ -1,3 +1,5 @@
+# "get the points coordinate"
+
 # 定义输入和输出文件路径
 input_file_path = 'data_files/alpha.txt'
 output_file_path = 'data_files/points_coordinate.txt'
