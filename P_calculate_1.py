@@ -6,14 +6,14 @@ from scipy.integrate import solve_bvp
 
 
 # 假设数据文件的每一行格式为: x, y, line_id, alpha_n, alpha_p
-data = pd.read_csv('alpha.txt', sep='\s+', header=None, names=['x', 'y', 'line_id', 'alpha_n', 'alpha_p', 'Rbtbt'],skiprows=8)
+data = pd.read_csv('data_files/alpha.txt', sep='\s+', header=None, names=['x', 'y', 'line_id', 'alpha_n', 'alpha_p'],skiprows=8)
 data = data.to_numpy()
 x = data[:, 0]*1e-6
 y = data[:, 1]*1e-6
 line_ids = data[:, 2]
 alpha_n = data[:, 3]
 alpha_p = data[:, 4]
-Rbtbt = data[:, 5]
+
 # 找出所有不同的线段编号
 unique_line_ids = np.unique(line_ids)
 

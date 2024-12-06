@@ -4,16 +4,18 @@ from matplotlib import pyplot as plt
 from scipy.integrate import solve_bvp, trapz
 
 # 假设数据文件的每一行格式为: x, y, line_id, alpha_n, alpha_p
-data = pd.read_csv('alpha.txt', sep='\s+', header=None, names=['x', 'y', 'line_id', 'alpha_n', 'alpha_p', 'Rbtbt'],skiprows=8)
-data1 = pd.read_csv('DCR_srh_tat.txt', sep='\s+', header=None, names=['x', 'y', 'line_id', 'alpha_n', 'alpha_p', 'Rbtbt'],skiprows=8)
+data = pd.read_csv('data_files/alpha.txt', sep='\s+', header=None, names=['x', 'y', 'line_id', 'alpha_n', 'alpha_p'],skiprows=8)
+data1 = pd.read_csv('data_files/DCR_srh_tat.txt', sep='\s+', header=None, names=['x', 'y', 'Rsrh', 'Rbtbt'],skiprows=9)
 data = data.to_numpy()
+data1 = data1.to_numpy()
 x = data[:, 0]*1e-6
 y = data[:, 1]*1e-6
 line_ids = data[:, 2]
 alpha_n = data[:, 3]
 alpha_p = data[:, 4]
-Rbtbt = data[:, 5]
-Rsrh = data[:, 4]
+Rsrh = data1[:, 2]
+Rbtbt = data1[:, 3]
+
 # 找出所有不同的线段编号
 unique_line_ids = np.unique(line_ids)
 
@@ -73,38 +75,42 @@ for line_id in unique_line_ids:
     # 存储结果
     n_solution = solution.sol(l)[0]
     p_solution = solution.sol(l)[1]
-    Rbtbt_interp = np.interp(l, l, Rbtbt_segment)
-    Rsrh_interp = np.interp(l, l, Rbtbt_segment)
-    integral_Rbtbt = trapz(Rbtbt_interp * (n_solution + p_solution - n_solution * p_solution), l)
-    integral_Rbtbt = trapz(Rbtbt_interp * (n_solution + p_solution - n_solution * p_solution), l)
+
+    P = n_solution + p_solution - n_solution * p_solution
+    y_srh = -Rsrh_segment * P
+    y_btbt = Rbtbt_segment * P
+
+    integral_Rsrh = trapz(y_srh, x=l)
+    integral_Rbtbt = trapz(y_btbt, x=l)
     # 将结果存入字典
     results[line_id] = {
         'l': l,
         'n_solution': n_solution,
         'p_solution': p_solution,
-        'integral_Rbtbt': integral_Rbtbt * 1e-12,
+        'integral_Rsrh': integral_Rsrh * 1e-12,
         'integral_Rbtbt': integral_Rbtbt * 1e-12
     }
 
 # 提取 integral_Rbtbt 结果
-integral_Rbtbt_values = [result['integral_Rbtbt'] for result in results.values()]
+integral_Rsrh_values = [result['integral_Rbtbt'] for result in results.values()]
 integral_Rbtbt_values = [result['integral_Rsrh'] for result in results.values()]
 
 # 计算平均值
+average_integral_Rsrh = np.mean(integral_Rsrh_values)
 average_integral_Rbtbt = np.mean(integral_Rbtbt_values)
-average_integral_Rsrh = np.mean(integral_Rbtbt_values)
 
 # 输出平均值
-print(f"Average Integral of Rbtbt: {average_integral_Rbtbt}")
 print(f"Average Integral of Rsrh: {average_integral_Rsrh}")
+print(f"Average Integral of Rbtbt: {average_integral_Rbtbt}")
+
 
 # 绘制 integral_Rbtbt 的点图
 plt.figure(figsize=(8, 5))
-plt.scatter(unique_line_ids, integral_Rbtbt_values, color='b', label='Integral Rbtbt')
-plt.axhline(y=average_integral_Rbtbt, color='r', linestyle='--', label=f'Average = {average_integral_Rbtbt:.2f}')
+plt.scatter(unique_line_ids, integral_Rsrh_values, color='b', label='Integral Rsrh')
+plt.axhline(y=average_integral_Rsrh, color='r', linestyle='--', label=f'Average = {average_integral_Rsrh:.2f}')
 plt.xlabel('Line ID')
-plt.ylabel('Integral Rbtbt')
-plt.title('Integral of Rbtbt for Each Line Segment')
+plt.ylabel('Integral Rsrh')
+plt.title('Integral of Rsrh for Each Line Segment')
 plt.legend()
 plt.grid(True)
 

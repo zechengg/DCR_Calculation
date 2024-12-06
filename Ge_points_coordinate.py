@@ -1,6 +1,6 @@
 # 定义输入和输出文件路径
-input_file_path = 'alpha.txt'
-output_file_path = 'points_coordinate.txt'
+input_file_path = 'data_files/alpha.txt'
+output_file_path = 'data_files/points_coordinate.txt'
 
 # 初始化一个计数器来跟踪行号
 line_count = 0
